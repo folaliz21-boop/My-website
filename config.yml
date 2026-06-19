@@ -1,0 +1,52 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "bags"
+    label: "Bags"
+    label_singular: "Bag"
+    folder: "products/bags"
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Product Name", name: "name", widget: "string" }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options: ["Tote Bags", "Crossbody", "Work Bags", "Clutches"]
+      - { label: "Price (₦)", name: "price", widget: "number", value_type: "int" }
+      - label: "Badge"
+        name: "badge"
+        widget: "select"
+        options: ["", "New", "Bestseller", "Flagship", "Limited", "Sold Out"]
+        required: false
+      - { label: "Product Photo", name: "image", widget: "image" }
+      - { label: "Description", name: "description", widget: "text" }
+
+  - name: "art"
+    label: "Wall Art"
+    label_singular: "Wall Art Piece"
+    folder: "products/art"
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Product Name", name: "name", widget: "string" }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options: ["Minimalist Line Art", "Afrocentric Patterns", "Botanical", "Abstract"]
+      - { label: "Base Price (₦)", name: "price", widget: "number", value_type: "int" }
+      - label: "Badge"
+        name: "badge"
+        widget: "select"
+        options: ["", "New", "Original Design", "Limited", "Sold Out"]
+        required: false
+      - { label: "Art Photo", name: "image", widget: "image" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Allow Frame & Size Customisation", name: "configurable", widget: "boolean", default: true }
