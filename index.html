@@ -1,11 +1,267 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E'may Signature — Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E'may Signature — Handcrafted Bags & Original Wall Art</title>
+<link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/index.html" class="logo">E'may<span>Signature</span></a>
+    <nav class="main-nav">
+      <a href="/index.html" class="active">Home</a>
+      <a href="/shop-bags.html">Bags</a>
+      <a href="/shop-art.html">Wall Art</a>
+      <a href="/index.html#about">Our Story</a>
+      <a href="/index.html#contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openCart()">Bag <span class="cart-count" style="display:none;">0</span></button>
+      <button class="mobile-menu-btn">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grain"></div>
+  <div class="container hero-inner">
+    <div>
+      <div class="hero-eyebrow">Handcrafted in Nigeria</div>
+      <h1>Carry your <em>signature.</em></h1>
+      <p class="hero-sub">Handmade bags and original wall art designed for the woman who moves through life with intention. Every piece made by hand, never copied, always yours.</p>
+      <div class="hero-actions">
+        <a href="/shop-bags.html" class="btn btn-primary">Shop Bags</a>
+        <a href="/shop-art.html" class="btn btn-outline">Shop Wall Art</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="ph-box ph-bag" data-label="Bisi Work Satchel — hero image"></div>
+      <div class="hero-badge">
+        <div class="num">100%</div>
+        <div class="lbl">Handcrafted</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE STRIP -->
+<div class="container">
+  <div class="value-strip">
+    <div class="value-item"><div class="vi-title">Handcrafted to Order</div><div class="vi-sub">Made with care, not mass-produced</div></div>
+    <div class="value-item"><div class="vi-title">Original Designs Only</div><div class="vi-sub">Never copied, always authentic</div></div>
+    <div class="value-item"><div class="vi-title">Secure Payment</div><div class="vi-sub">Paystack & bank transfer accepted</div></div>
+    <div class="value-item"><div class="vi-title">Nationwide Delivery</div><div class="vi-sub">Tracked shipping across Nigeria</div></div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="section-eyebrow">Two Collections</span><h2>Shop by category</h2></div>
+    </div>
+    <div class="category-split">
+      <a href="/shop-bags.html" class="category-card">
+        <div class="ph-box ph-bag" data-label="Bags collection"></div>
+        <div class="category-overlay"></div>
+        <div class="category-content">
+          <span class="cat-eyebrow">7 Designs</span>
+          <h3>Handmade Bags</h3>
+          <span class="category-link">Shop the collection &rarr;</span>
+        </div>
+      </a>
+      <a href="/shop-art.html" class="category-card">
+        <div class="ph-box ph-art" data-label="Wall art collection"></div>
+        <div class="category-overlay"></div>
+        <div class="category-content">
+          <span class="cat-eyebrow">7 Designs</span>
+          <h3>Original Wall Art</h3>
+          <span class="category-link">Design your piece &rarr;</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED BAGS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="section-eyebrow">Bestsellers</span><h2>Most loved bags</h2></div>
+      <a href="/shop-bags.html" class="btn btn-outline btn-sm">View all bags</a>
+    </div>
+    <div class="product-grid" id="featuredBags"><div class="loading-msg">Loading collection…</div></div>
+  </div>
+</section>
+
+<!-- WALL ART CONFIGURATOR -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="section-eyebrow">Design Your Own</span>
+        <h2>Build your wall art piece</h2>
+        <p class="section-desc">Choose an original design, pick your frame and size, and see it come together before you buy.</p>
+      </div>
+    </div>
+    <div class="configurator">
+      <div class="config-preview">
+        <div class="frame-mat" id="frameMat">
+          <div class="frame-art" id="frameArtPreview">Quiet Mornings</div>
+        </div>
+      </div>
+      <div class="config-panel">
+        <span class="ce-label">Live Preview</span>
+        <h3>Create your piece</h3>
+        <div class="option-group">
+          <span class="option-group-label">1. Choose your art design</span>
+          <div class="art-options" id="artOptions"><div style="color:rgba(247,242,236,0.4);font-size:0.8rem;">Loading designs…</div></div>
+        </div>
+        <div class="option-group">
+          <span class="option-group-label">2. Choose your frame</span>
+          <div class="swatch-options" id="frameOptions"></div>
+        </div>
+        <div class="option-group">
+          <span class="option-group-label">3. Choose your size</span>
+          <div class="size-options" id="sizeOptions"></div>
+        </div>
+        <div class="config-price" id="configPrice">&#8358;15,000 <span>incl. selected options</span></div>
+        <button class="btn btn-primary btn-full" onclick="addConfiguredArt()">Add to Bag</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED ART -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="section-eyebrow">Original Designs</span><h2>Explore wall art</h2></div>
+      <a href="/shop-art.html" class="btn btn-outline btn-sm">View all art</a>
+    </div>
+    <div class="product-grid" id="featuredArt"><div class="loading-msg">Loading collection…</div></div>
+  </div>
+</section>
+
+<!-- BRAND STORY -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="story-split">
+      <div class="story-visual">
+        <div class="ph-box ph-bag" data-label="Founder at work — handcrafting a bag"></div>
+      </div>
+      <div class="story-content">
+        <div class="quote-mark">"</div>
+        <p>I started E'may Signature because I believed a woman shouldn't have to choose between a bag that's beautiful and one that actually works for her life. Every piece is made by hand, because mass production can't replicate the care I put into every detail.</p>
+        <div class="story-signature">— Founder, E'may Signature</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer" id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">E'may Signature</div>
+        <p class="footer-about">Handcrafted bags and original wall art for the woman who carries her world with intention. CAC-registered Nigerian brand.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="/shop-bags.html">All Bags</a>
+        <a href="/shop-art.html">All Wall Art</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="#">Delivery Info</a>
+        <a href="#">Returns Policy</a>
+        <a href="#">Pre-Order FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Get in Touch</h4>
+        <p>hello@emaysignature.com</p>
+        <p>WhatsApp: +234 800 000 0000</p>
+        <p>Ibadan, Nigeria</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 E'may Signature. All rights reserved.</span>
+      <div class="payment-badges">
+        <span class="payment-badge">Paystack</span>
+        <span class="payment-badge">Bank Transfer</span>
+        <span class="payment-badge">Verve &middot; Mastercard &middot; Visa</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header"><h3>Your Bag</h3><button class="cart-close" onclick="closeCart()">&times;</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">&#8358;0</span></div>
+    <a href="/checkout.html" class="btn btn-primary btn-full">Checkout</a>
+    <div class="cart-note">Shipping &amp; payment at checkout</div>
+  </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+function productCard(p) {
+  return `<a href="/product.html?id=${p.id}" class="product-card">
+    <div class="product-thumb">
+      ${productImg(p)}
+      ${p.badge ? `<span class="product-tag">${p.badge}</span>` : ""}
+      <button class="quick-add" onclick="event.preventDefault();${p.configurable ? `window.location.href='/product.html?id=${p.id}'` : `Cart.add('${p.id}')`}">
+        ${p.configurable ? "Design This Piece" : "Quick Add"}
+      </button>
+    </div>
+    <div class="product-name">${p.name}</div>
+    <div class="product-meta">${p.category}</div>
+    <div class="product-price">${p.configurable ? "From " : ""}${formatNaira(p.price)}</div>
+  </a>`;
+}
+
+let configState = { artId: null, frame: "black", size: "a4" };
+
+function renderConfigurator() {
+  if (!PRODUCTS.art.length) return;
+  if (!configState.artId) configState.artId = PRODUCTS.art[0].id;
+  const art   = PRODUCTS.art.find(a => a.id === configState.artId);
+  const frame = FRAME_OPTIONS.find(f => f.id === configState.frame);
+  const size  = SIZE_OPTIONS.find(s  => s.id === configState.size);
+  document.getElementById("artOptions").innerHTML = PRODUCTS.art.map(a =>
+    `<div class="art-swatch ${a.id===configState.artId?"active":""}" onclick="setCA('${a.id}')">${a.name}</div>`
+  ).join("");
+  document.getElementById("frameOptions").innerHTML = FRAME_OPTIONS.map(f =>
+    `<div class="frame-swatch ${f.id===configState.frame?"active":""}" style="background:${f.hex};" onclick="setCF('${f.id}')" title="${f.name}"></div>`
+  ).join("");
+  document.getElementById("sizeOptions").innerHTML = SIZE_OPTIONS.map(s =>
+    `<div class="size-pill ${s.id===configState.size?"active":""}" onclick="setCS('${s.id}')">${s.name}</div>`
+  ).join("");
+  document.getElementById("frameMat").style.background = frame.hex;
+  document.getElementById("frameArtPreview").textContent = art.name;
+  const total = art.price + frame.priceAdd + size.priceAdd;
+  document.getElementById("configPrice").innerHTML = formatNaira(total) + ` <span>incl. ${frame.name}, ${size.name}</span>`;
+}
+
+function setCA(id) { configState.artId = id; renderConfigurator(); }
+function setCF(id) { configState.frame = id; renderConfigurator(); }
+function setCS(id) { configState.size  = id; renderConfigurator(); }
+function addConfiguredArt() { Cart.add(configState.artId, { frame: configState.frame, size: configState.size }); }
+
+PRODUCTS_READY.then(() => {
+  document.getElementById("featuredBags").innerHTML = PRODUCTS.bags.slice(0,3).map(productCard).join("");
+  document.getElementById("featuredArt").innerHTML  = PRODUCTS.art.slice(0,3).map(productCard).join("");
+  renderConfigurator();
+});
+</script>
 </body>
 </html>

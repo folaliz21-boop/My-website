@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product — E'may Signature</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/index.html" class="logo">E'may<span>Signature</span></a>
+    <nav class="main-nav">
+      <a href="/index.html">Home</a>
+      <a href="/shop-bags.html">Bags</a>
+      <a href="/shop-art.html">Wall Art</a>
+      <a href="/index.html#about">Our Story</a>
+      <a href="/index.html#contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openCart()">Bag <span class="cart-count" style="display:none;">0</span></button>
+      <button class="mobile-menu-btn">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="pdp-grid">
+      <div>
+        <div class="pdp-gallery-main" id="pdpMainImg"></div>
+        <div class="pdp-thumbs" id="pdpThumbs"></div>
+      </div>
+      <div class="pdp-info" id="pdpInfo"><div class="loading-msg">Loading product…</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><div class="footer-logo">E'may Signature</div><p class="footer-about">Handcrafted bags and original wall art for the woman who carries her world with intention.</p></div>
+      <div class="footer-col"><h4>Shop</h4><a href="/shop-bags.html">All Bags</a><a href="/shop-art.html">All Wall Art</a></div>
+      <div class="footer-col"><h4>Support</h4><a href="#">Delivery Info</a><a href="#">Returns</a></div>
+      <div class="footer-col"><h4>Get in Touch</h4><p>hello@emaysignature.com</p><p>Ibadan, Nigeria</p></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; 2026 E'may Signature.</span></div>
+  </div>
+</footer>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header"><h3>Your Bag</h3><button class="cart-close" onclick="closeCart()">&times;</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">&#8358;0</span></div>
+    <a href="/checkout.html" class="btn btn-primary btn-full">Checkout</a>
+  </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+const productId = new URLSearchParams(window.location.search).get("id") || "bag-adunni-tote";
+
+PRODUCTS_READY.then(() => {
+  const p = findProduct(productId);
+  const isArt = productId.startsWith("art");
+
+  if (!p) {
+    document.getElementById("pdpInfo").innerHTML = `<p>Product not found. <a href="/index.html" style="text-decoration:underline;">Return home</a>.</p>`;
+    return;
+  }
+
+  document.title = p.name + " — E'may Signature";
+  document.getElementById("breadcrumb").innerHTML =
+    `<a href="/index.html">Home</a> / <a href="${isArt?"/shop-art.html":"/shop-bags.html"}">${isArt?"Wall Art":"Bags"}</a> / ${p.name}`;
+
+  document.getElementById("pdpMainImg").innerHTML = productImg(p);
+  document.getElementById("pdpThumbs").innerHTML = [1,2,3].map((n,i) =>
+    `<div class="pdp-thumb ${i===0?"active":""}">${productImg(p)}</div>`
+  ).join("");
+
+  let config = { frame: "black", size: "a4" };
+  let qty = 1;
+
+  function getTotal() {
+    let t = p.price;
+    if (isArt) {
+      t += (FRAME_OPTIONS.find(f=>f.id===config.frame)?.priceAdd||0);
+      t += (SIZE_OPTIONS.find(s=>s.id===config.size)?.priceAdd||0);
+    }
+    return t;
+  }
+
+  function renderInfo() {
+    const configHTML = isArt ? `
+      <div class="option-group" style="margin-bottom:1.25rem;">
+        <span class="pdp-option-label">Frame finish</span>
+        <div class="swatch-options" id="pdpFrames">
+          ${FRAME_OPTIONS.map(f=>`<div class="frame-swatch ${f.id===config.frame?"active":""}" style="background:${f.hex};border-color:${f.id===config.frame?"var(--cognac)":"#ccc"};" onclick="setCF('${f.id}')" title="${f.name}"></div>`).join("")}
+        </div>
+      </div>
+      <div class="option-group" style="margin-bottom:1.25rem;">
+        <span class="pdp-option-label">Print size</span>
+        <div class="size-options" style="flex-wrap:wrap;" id="pdpSizes">
+          ${SIZE_OPTIONS.map(s=>`<div class="size-pill ${s.id===config.size?"active":""}" onclick="setCS('${s.id}')" style="color:var(--espresso);border-color:${s.id===config.size?"var(--cognac)":"var(--line)"};">${s.name}</div>`).join("")}
+        </div>
+      </div>` : "";
+
+    document.getElementById("pdpInfo").innerHTML = `
+      <span class="pdp-category">${p.category}</span>
+      <h1>${p.name}</h1>
+      <div class="pdp-price" id="pdpPrice">${formatNaira(getTotal())}</div>
+      <p class="pdp-desc">${p.desc}</p>
+      ${configHTML}
+      <div class="pdp-actions">
+        <div class="qty-stepper">
+          <button onclick="changeQty(-1)">&minus;</button>
+          <span id="pdpQty">1</span>
+          <button onclick="changeQty(1)">+</button>
+        </div>
+        <button class="btn btn-primary" style="flex:1;" onclick="addToCart()">Add to Bag</button>
+      </div>
+      <div class="pdp-divider"></div>
+      <div class="accordion-item open">
+        <div class="accordion-head" onclick="toggleAccordion(this)">Materials &amp; Care <span class="accordion-icon">+</span></div>
+        <div class="accordion-body">${isArt ? "Printed on 250gsm premium matte archival paper. Frame hand-assembled. Avoid direct sunlight for longest colour life." : "Handcrafted from premium vegan leather with reinforced stitching. Wipe clean with a soft damp cloth. Store in dust bag when not in use."}</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">Delivery &amp; Production <span class="accordion-icon">+</span></div>
+        <div class="accordion-body">${isArt ? "Each piece is framed to order. Allow 5–7 working days for production, plus delivery. Nationwide delivery via GIG Logistics." : "Each bag is handcrafted to order. Allow 1–2 days for production. Delivery via GIG Logistics or Kwik, 2–5 working days."}</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">Returns Policy <span class="accordion-icon">+</span></div>
+        <div class="accordion-body">We accept returns only for manufacturing defects, reported within 48 hours of delivery with photo evidence. Custom-configured wall art is non-returnable once production begins.</div>
+      </div>`;
+  }
+
+  window.setCF = function(id) { config.frame = id; renderInfo(); };
+  window.setCS = function(id) { config.size  = id; renderInfo(); };
+  window.changeQty = function(d) { qty = Math.max(1, qty+d); document.getElementById("pdpQty").textContent = qty; };
+  window.addToCart = function() { Cart.add(productId, isArt ? { frame: config.frame, size: config.size } : {}, qty); };
+
+  renderInfo();
+});
+</script>
+</body>
+</html>

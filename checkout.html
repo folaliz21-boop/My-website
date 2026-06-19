@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — E'may Signature</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="https://js.paystack.co/v2/inline.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/index.html" class="logo">E'may<span>Signature</span></a>
+    <nav class="main-nav"></nav>
+    <div class="header-actions"><span style="font-size:0.85rem;color:var(--text-muted);">Secure Checkout</span></div>
+  </div>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <h1 style="margin-bottom:2rem;font-family:var(--font-display);">Checkout</h1>
+    <div class="checkout-grid">
+      <div>
+        <div class="checkout-section">
+          <h3>Contact Information</h3>
+          <div class="form-field"><label>Full Name</label><input type="text" id="custName" placeholder="e.g. Amara Johnson"></div>
+          <div class="form-row">
+            <div class="form-field"><label>Email Address</label><input type="email" id="custEmail" placeholder="you@example.com"></div>
+            <div class="form-field"><label>Phone Number</label><input type="tel" id="custPhone" placeholder="080..."></div>
+          </div>
+        </div>
+        <div class="checkout-section">
+          <h3>Delivery Address</h3>
+          <div class="form-field"><label>Street Address</label><input type="text" id="custAddress" placeholder="House no., street name"></div>
+          <div class="form-row">
+            <div class="form-field"><label>City</label><input type="text" id="custCity" placeholder="e.g. Ibadan"></div>
+            <div class="form-field"><label>State</label><input type="text" id="custState" placeholder="e.g. Oyo"></div>
+          </div>
+          <div class="form-field"><label>Delivery Notes (optional)</label><textarea id="custNotes" rows="2" placeholder="Landmark, gate code, preferred time…"></textarea></div>
+        </div>
+        <div class="checkout-section">
+          <h3>Payment Method</h3>
+          <div class="payment-options">
+            <label class="payment-option active" id="optPaystack">
+              <input type="radio" name="payment" value="paystack" checked onclick="selectPayment('paystack')">
+              <div><div style="font-weight:500;">Pay with Card / Paystack</div><div style="font-size:0.78rem;color:var(--text-muted);">Visa, Mastercard, Verve — instant confirmation</div></div>
+            </label>
+            <label class="payment-option" id="optTransfer">
+              <input type="radio" name="payment" value="transfer" onclick="selectPayment('transfer')">
+              <div><div style="font-weight:500;">Direct Bank Transfer</div><div style="font-size:0.78rem;color:var(--text-muted);">We confirm your order once payment reflects</div></div>
+            </label>
+          </div>
+          <div class="transfer-box" id="transferBox">
+            <p><strong>Bank:</strong> Your Bank Name</p>
+            <p><strong>Account Number:</strong> 0000000000</p>
+            <p><strong>Account Name:</strong> E'may Signature</p>
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:0.75rem;">After transfer, click "Place Order" and send your receipt to our WhatsApp for faster confirmation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="order-summary">
+          <h3 style="font-size:1.1rem;margin-bottom:1.25rem;font-family:var(--font-body);">Order Summary</h3>
+          <div id="summaryItems"></div>
+          <div class="pdp-divider"></div>
+          <div class="summary-line"><span>Subtotal</span><span id="summarySubtotal">&#8358;0</span></div>
+          <div class="summary-line"><span>Delivery</span><span>Calculated after order</span></div>
+          <div class="summary-total"><span>Total</span><span id="summaryTotal">&#8358;0</span></div>
+          <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="placeOrder()" id="placeOrderBtn">Place Order</button>
+          <div class="cart-note" style="margin-top:0.75rem;">Each bag is handcrafted to order. We'll confirm your production timeline after purchase.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom"><span>&copy; 2026 E'may Signature.</span><div class="payment-badges"><span class="payment-badge">Paystack</span><span class="payment-badge">Bank Transfer</span><span class="payment-badge">Verve &middot; Mastercard &middot; Visa</span></div></div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+function selectPayment(method) {
+  document.getElementById("optPaystack").classList.toggle("active", method==="paystack");
+  document.getElementById("optTransfer").classList.toggle("active", method==="transfer");
+  document.getElementById("transferBox").style.display = method==="transfer" ? "block" : "none";
+}
+
+function renderSummary() {
+  const el = document.getElementById("summaryItems");
+  if (!Cart.items.length) {
+    el.innerHTML = `<p style="color:var(--text-muted);font-size:0.88rem;">Your bag is empty. <a href="/index.html" style="text-decoration:underline;">Continue shopping</a>.</p>`;
+    document.getElementById("placeOrderBtn").disabled = true;
+    return;
+  }
+  el.innerHTML = Cart.items.map(i => `<div class="summary-line"><span>${i.name} &times; ${i.qty}</span><span>${formatNaira(i.price*i.qty)}</span></div>`).join("");
+  const sub = Cart.subtotal();
+  document.getElementById("summarySubtotal").textContent = formatNaira(sub);
+  document.getElementById("summaryTotal").textContent = formatNaira(sub);
+}
+
+function validate() {
+  const fields = ["custName","custEmail","custPhone","custAddress","custCity","custState"];
+  for (const id of fields) {
+    if (!document.getElementById(id).value.trim()) {
+      showToast("Please fill in all required fields");
+      document.getElementById(id).focus();
+      return false;
+    }
+  }
+  return true;
+}
+
+function placeOrder() {
+  if (!Cart.items.length || !validate()) return;
+  const method = document.querySelector('input[name="payment"]:checked').value;
+  const email  = document.getElementById("custEmail").value;
+  const amount = Cart.subtotal();
+
+  if (method === "paystack") {
+    // Replace pk_test_xxxxxxxxxxxx with your real Paystack PUBLIC key
+    const handler = PaystackPop.setup({
+      key: "pk_test_xxxxxxxxxxxx",
+      email, currency: "NGN",
+      amount: amount * 100,
+      ref: "EMAY-" + Date.now(),
+      callback(res) {
+        showToast("Payment successful! Ref: " + res.reference);
+        Cart.items = []; Cart.save();
+        setTimeout(() => window.location.href = "/index.html", 2500);
+      },
+      onClose() { showToast("Payment window closed."); }
+    });
+    handler.openIframe();
+  } else {
+    showToast("Order placed! Please complete your bank transfer to confirm.");
+    Cart.items = []; Cart.save();
+    setTimeout(() => window.location.href = "/index.html", 2500);
+  }
+}
+
+renderSummary();
+</script>
+</body>
+</html>

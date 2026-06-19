@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop Bags — E'may Signature</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/index.html" class="logo">E'may<span>Signature</span></a>
+    <nav class="main-nav">
+      <a href="/index.html">Home</a>
+      <a href="/shop-bags.html" class="active">Bags</a>
+      <a href="/shop-art.html">Wall Art</a>
+      <a href="/index.html#about">Our Story</a>
+      <a href="/index.html#contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openCart()">Bag <span class="cart-count" style="display:none;">0</span></button>
+      <button class="mobile-menu-btn">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<div class="page-banner">
+  <h1>Handmade Bags</h1>
+  <p>Structured, soft, and everything in between — handcrafted to carry your everyday with intention.</p>
+</div>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="filter-bar">
+      <div class="filter-pills">
+        <div class="filter-pill active" data-cat="all">All</div>
+        <div class="filter-pill" data-cat="Tote Bags">Tote Bags</div>
+        <div class="filter-pill" data-cat="Crossbody">Crossbody</div>
+        <div class="filter-pill" data-cat="Work Bags">Work Bags</div>
+        <div class="filter-pill" data-cat="Clutches">Clutches</div>
+      </div>
+      <select class="sort-select" id="sortSelect">
+        <option value="default">Sort: Featured</option>
+        <option value="low">Price: Low to High</option>
+        <option value="high">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="product-grid" id="bagsGrid"><div class="loading-msg">Loading collection…</div></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><div class="footer-logo">E'may Signature</div><p class="footer-about">Handcrafted bags and original wall art for the woman who carries her world with intention.</p></div>
+      <div class="footer-col"><h4>Shop</h4><a href="/shop-bags.html">All Bags</a><a href="/shop-art.html">All Wall Art</a></div>
+      <div class="footer-col"><h4>Support</h4><a href="#">Delivery Info</a><a href="#">Returns Policy</a></div>
+      <div class="footer-col"><h4>Get in Touch</h4><p>hello@emaysignature.com</p><p>Ibadan, Nigeria</p></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; 2026 E'may Signature.</span><div class="payment-badges"><span class="payment-badge">Paystack</span><span class="payment-badge">Bank Transfer</span></div></div>
+  </div>
+</footer>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header"><h3>Your Bag</h3><button class="cart-close" onclick="closeCart()">&times;</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">&#8358;0</span></div>
+    <a href="/checkout.html" class="btn btn-primary btn-full">Checkout</a>
+    <div class="cart-note">Shipping &amp; payment at checkout</div>
+  </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+let activeCat = "all", activeSort = "default";
+
+function productCard(p) {
+  return `<a href="/product.html?id=${p.id}" class="product-card">
+    <div class="product-thumb">
+      ${productImg(p)}
+      ${p.badge ? `<span class="product-tag">${p.badge}</span>` : ""}
+      <button class="quick-add" onclick="event.preventDefault();Cart.add('${p.id}')">Quick Add</button>
+    </div>
+    <div class="product-name">${p.name}</div>
+    <div class="product-meta">${p.category}</div>
+    <div class="product-price">${formatNaira(p.price)}</div>
+  </a>`;
+}
+
+function render() {
+  let list = [...PRODUCTS.bags];
+  if (activeCat !== "all") list = list.filter(p => p.category === activeCat);
+  if (activeSort === "low")  list.sort((a,b) => a.price - b.price);
+  if (activeSort === "high") list.sort((a,b) => b.price - a.price);
+  document.getElementById("bagsGrid").innerHTML = list.length ? list.map(productCard).join("") : "<p style='color:var(--text-muted);'>No bags in this category yet.</p>";
+}
+
+document.querySelectorAll(".filter-pill").forEach(pill => {
+  pill.addEventListener("click", () => {
+    document.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("active"));
+    pill.classList.add("active");
+    activeCat = pill.dataset.cat;
+    render();
+  });
+});
+document.getElementById("sortSelect").addEventListener("change", e => { activeSort = e.target.value; render(); });
+PRODUCTS_READY.then(render);
+</script>
+</body>
+</html>
